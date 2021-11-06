@@ -165,8 +165,8 @@ std::optional<Prog3::Core::Model::Item> BoardRepository::putItem(int columnId, i
     time_t now = time(0);
     char *datetime = ctime(&now);
 
-    string sqlPutItem = "UPDATE item SET title= \"" + title + "\", position = " + to_string(position) + ", columnId = " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
-
+    //string sqlPutItem = "UPDATE item SET title= \"" + title + "\", position = " + to_string(position) + ", columnId = " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
+    string sqlPutItem = "UPDATE item SET title =\"" + title + "\"" + ", position =" + to_string(position) + ", column_id= " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
     int result = 0;
     char *errorMessage = nullptr;
 
