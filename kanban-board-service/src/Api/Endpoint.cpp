@@ -35,6 +35,10 @@ void Endpoint::registerRoutes() {
             case HTTPMethod::Post: {
                 jsonColumns = boardManager.postColumn(req.body);
                 res.code = 201;
+                //ADDED BY TOM TO SEND FITTING ERROR CODE
+                if (jsonColumns == "{}") {
+                    res.code = 400;
+                }
                 break;
             }
             default: {
