@@ -161,14 +161,26 @@ std::optional<Item> BoardRepository::postItem(int columnId, std::string title, i
     return std::nullopt;
 }
 
+int callback(void *NotUsed, int argc, char **argv, char **azColName) {
+    return 1;
+}
+
 std::optional<Prog3::Core::Model::Item> BoardRepository::putItem(int columnId, int itemId, std::string title, int position) {
     time_t now = time(0);
     char *datetime = ctime(&now);
 
+    char *errorMessage = nullptr;
+    int result = 0;
+
+    string sqlSelect = "SELECT * FROM item WHERE id =" + to_string(itemId) + ";";
+    int selectAnswer = sqlite3_exec(database, sqlSelect.c_str(), callback, 0, &errorMessage);
+    if (selectAnswer == SQLITE_ABORT) {
+        std::cout << "Item is not created yet";
+        return std::nullopt;
+    }
+
     //string sqlPutItem = "UPDATE item SET title= \"" + title + "\", position = " + to_string(position) + ", columnId = " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
     string sqlPutItem = "UPDATE item SET title =\"" + title + "\"" + ", position =" + to_string(position) + ", column_id= " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
-    int result = 0;
-    char *errorMessage = nullptr;
 
     result = sqlite3_exec(database, sqlPutItem.c_str(), NULL, 0, &errorMessage);
     handleSQLError(result, errorMessage);
