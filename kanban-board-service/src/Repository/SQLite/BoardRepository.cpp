@@ -253,10 +253,12 @@ std::optional<Prog3::Core::Model::Item> BoardRepository::putItem(int columnId, i
     void *selectResult = static_cast<void *>(new std::string(""));
     string sqlSelect = "SELECT * FROM item WHERE id =" + to_string(itemId) + ";";
     int selectAnswer = sqlite3_exec(database, sqlSelect.c_str(), BoardRepository::queryCallback, selectResult, &errorMessage);
-    string *selectResultP = static_cast<string *>(selectResult);
-    string selectResult = *selectResultP;
+    handleSQLError(selectAnswer, errorMessage);
 
-    if (selectResult == "") {
+    string *tempPointer = static_cast<std::string *>(selectResult);
+    string thisItemString = *tempPointer;
+
+    if (thisItemString == "") {
         return std::nullopt;
     }
 
