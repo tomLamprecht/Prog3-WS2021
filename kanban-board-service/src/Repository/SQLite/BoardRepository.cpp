@@ -249,14 +249,13 @@ std::optional<Prog3::Core::Model::Item> BoardRepository::putItem(int columnId, i
     char *errorMessage = nullptr;
     int result = 0;
 
+    // COMMENT THIS IS IN IF YOU WANT TO PREVENT USERS CREATING RESOURCES VIA PUT INSTEAD OF POST
     string sqlSelect = "SELECT * FROM item WHERE id =" + to_string(itemId) + ";";
-    /* COMMENT THIS IS IN IF YOU WANT TO PREVENT USERS CREATING RESOURCES VIA PUT INSTEAD OF POST
     int selectAnswer = sqlite3_exec(database, sqlSelect.c_str(), callback, 0, &errorMessage);
     if (selectAnswer == SQLITE_ABORT) {
         std::cout << "Item is not created yet";
         return std::nullopt;
     }
-    */
 
     //string sqlPutItem = "UPDATE item SET title= \"" + title + "\", position = " + to_string(position) + ", columnId = " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
     string sqlPutItem = "UPDATE item SET title =\"" + title + "\"" + ", position =" + to_string(position) + ", column_id= " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
