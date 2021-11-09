@@ -257,12 +257,10 @@ std::optional<Prog3::Core::Model::Item> BoardRepository::putItem(int columnId, i
 
     string *tempPointer = static_cast<std::string *>(selectResult);
     string thisItemString = *tempPointer;
-
     if (thisItemString == "") {
         return std::nullopt;
     }
 
-    //string sqlPutItem = "UPDATE item SET title= \"" + title + "\", position = " + to_string(position) + ", columnId = " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
     string sqlPutItem = "UPDATE item SET title =\"" + title + "\"" + ", position =" + to_string(position) + ", column_id= " + to_string(columnId) + " WHERE id = " + to_string(itemId) + ";";
 
     result = sqlite3_exec(database, sqlPutItem.c_str(), NULL, 0, &errorMessage);
