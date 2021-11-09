@@ -250,10 +250,13 @@ std::optional<Prog3::Core::Model::Item> BoardRepository::putItem(int columnId, i
     int result = 0;
 
     // COMMENT THIS IS IN IF YOU WANT TO PREVENT USERS CREATING RESOURCES VIA PUT INSTEAD OF POST
+    void *selectResult = static_cast<void *>(new std::string(""));
     string sqlSelect = "SELECT * FROM item WHERE id =" + to_string(itemId) + ";";
-    int selectAnswer = sqlite3_exec(database, sqlSelect.c_str(), callback, 0, &errorMessage);
-    if (selectAnswer == SQLITE_ABORT) {
-        std::cout << "Item is not created yet";
+    int selectAnswer = sqlite3_exec(database, sqlSelect.c_str(), BoardRepository::queryCallback, selectResult, &errorMessage);
+    string *selectResultP = static_cast<string *>(selectResult);
+    string selectResult = *selectResultP;
+
+    if (selectResult == "") {
         return std::nullopt;
     }
 
