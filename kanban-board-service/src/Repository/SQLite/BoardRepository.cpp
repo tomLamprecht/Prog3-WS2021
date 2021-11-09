@@ -82,12 +82,12 @@ std::optional<Column> BoardRepository::getColumn(int id) {
     string sqlSelect = "SELECT * FROM column;";
 
     char *errorMessage = nullptr;
-    void *vp = static_cast<void *>(new std::string(""));
+    void *selectResult = static_cast<void *>(new std::string(""));
 
-    int result = sqlite3_exec(database, sqlSelect.c_str(), BoardRepository::queryCallback, vp, &errorMessage);
+    int result = sqlite3_exec(database, sqlSelect.c_str(), BoardRepository::queryCallback, selectResult, &errorMessage);
     handleSQLError(result, errorMessage);
 
-    std::string *sp = static_cast<std::string *>(vp);
+    std::string *sp = static_cast<std::string *>(selectResult);
     std::string s = *sp;
 
     cout << s << endl;
@@ -133,15 +133,26 @@ std::vector<std::string> split(const std::string &s, char delim) {
 std::optional<Prog3::Core::Model::Column> BoardRepository::putColumn(int id, std::string name, int position) {
     int result = 0;
     char *errorMessage = nullptr;
-    void *vp = static_cast<void *>(new std::string(""));
+    void *selectResult = static_cast<void *>(new std::string(""));
+    void *thisColumn = static_cast<void *>(new std::string(""));
 
     string sqlSelectItems = "Select * from item WHERE column_id=" + to_string(id) + ";";
     string sqlPutColumn = "UPDATE column SET name= \"" + name + "\", position = " + to_string(position) + " WHERE id = " + to_string(id) + ";";
+    string sqlSelectColumn = "Select * from column WHERE id=" + to_string(id) + ";";
+
+    //CHECK IF COLUMN EXISTS
+    result = sqlite3_exec(database, sqlSelectColumn.c_str(), BoardRepository::queryCallback, thisColumn, &errorMessage);
+    handleSQLError(result, errorMessage);
+    string *tempPointer = static_cast<std::string *>(thisColumn);
+    string thisColumnString = *tempPointer;
+    if (thisColumnString == "") {
+        return std::nullopt;
+    }
 
     //GET ALL ITEMS OUT OF THE COLUMN
-    result = sqlite3_exec(database, sqlSelectItems.c_str(), BoardRepository::queryCallback, vp, &errorMessage);
+    result = sqlite3_exec(database, sqlSelectItems.c_str(), BoardRepository::queryCallback, selectResult, &errorMessage);
     handleSQLError(result, errorMessage);
-    string *sp = static_cast<std::string *>(vp);
+    string *sp = static_cast<std::string *>(selectResult);
     //The data is in following format: Every Column is differenced by a ";" every entry is differenced by a "," and every Key Value Pair is Differenced by a ":"
     string data = *sp;
     std::vector items = split(data, ';');
@@ -164,6 +175,7 @@ std::optional<Prog3::Core::Model::Column> BoardRepository::putColumn(int id, std
     }
 
     //UPDATE COLUMN
+    errorMessage = nullptr;
     result = sqlite3_exec(database, sqlPutColumn.c_str(), NULL, 0, &errorMessage);
     handleSQLError(result, errorMessage);
 
