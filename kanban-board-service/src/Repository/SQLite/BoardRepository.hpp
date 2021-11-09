@@ -10,6 +10,7 @@ namespace SQLite {
 class BoardRepository : public RepositoryIf {
   private:
     sqlite3 *database;
+    std::string sqlResultString;
 
     void initialize();
     void createDummyData();

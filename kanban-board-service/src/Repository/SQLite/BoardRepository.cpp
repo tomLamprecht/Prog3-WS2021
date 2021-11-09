@@ -2,7 +2,12 @@
 #include "Core/Exception/NotImplementedException.hpp"
 #include <ctime>
 #include <filesystem>
+#include <iterator>
+#include <sstream>
 #include <string.h>
+#include <string>
+#include <tr1/unordered_map>
+#include <vector>
 
 using namespace Prog3::Repository::SQLite;
 using namespace Prog3::Core::Model;
@@ -62,7 +67,7 @@ void BoardRepository::initialize() {
     handleSQLError(result, errorMessage);
 
     // only if dummy data is needed ;)
-    //createDummyData();
+    createDummyData();
 }
 
 Board BoardRepository::getBoard() {
@@ -74,6 +79,19 @@ std::vector<Column> BoardRepository::getColumns() {
 }
 
 std::optional<Column> BoardRepository::getColumn(int id) {
+    string sqlSelect = "SELECT * FROM column;";
+
+    char *errorMessage = nullptr;
+    void *vp = static_cast<void *>(new std::string(""));
+
+    int result = sqlite3_exec(database, sqlSelect.c_str(), BoardRepository::queryCallback, vp, &errorMessage);
+    handleSQLError(result, errorMessage);
+
+    std::string *sp = static_cast<std::string *>(vp);
+    std::string s = *sp;
+
+    cout << s << endl;
+    delete sp;
     throw NotImplementedException();
 }
 
@@ -97,12 +115,55 @@ std::optional<Column> BoardRepository::postColumn(std::string name, int position
     return std::nullopt;
 }
 
-std::optional<Prog3::Core::Model::Column> BoardRepository::putColumn(int id, std::string name, int position) {
-    string sqlPutColumn = "UPDATE column SET name= \"" + name + "\", position = " + to_string(position) + " WHERE id = " + to_string(id) + ";";
+template <typename Out>
+void split(const std::string &s, char delim, Out result) {
+    std::istringstream iss(s);
+    std::string item;
+    while (std::getline(iss, item, delim)) {
+        *result++ = item;
+    }
+}
 
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, std::back_inserter(elems));
+    return elems;
+}
+
+std::optional<Prog3::Core::Model::Column> BoardRepository::putColumn(int id, std::string name, int position) {
     int result = 0;
     char *errorMessage = nullptr;
+    void *vp = static_cast<void *>(new std::string(""));
 
+    string sqlSelectItems = "Select * from item WHERE column_id=" + to_string(id) + ";";
+    string sqlPutColumn = "UPDATE column SET name= \"" + name + "\", position = " + to_string(position) + " WHERE id = " + to_string(id) + ";";
+
+    //GET ALL ITEMS OUT OF THE COLUMN
+    result = sqlite3_exec(database, sqlSelectItems.c_str(), BoardRepository::queryCallback, vp, &errorMessage);
+    handleSQLError(result, errorMessage);
+    string *sp = static_cast<std::string *>(vp);
+    //The data is in following format: Every Column is differenced by a ";" every entry is differenced by a "," and every Key Value Pair is Differenced by a ":"
+    string data = *sp;
+    std::vector items = split(data, ';');
+    vector<Item> realItems{};
+    for (auto item : items) {
+        vector tuples = split(item, ',');
+
+        string itemIdString = split(tuples[0], ':')[1];
+        int itemId = std::stoi(itemIdString);
+
+        string title = split(tuples[1], ':')[1];
+
+        string datetime = split(tuples[2], ':')[1];
+
+        string positionString = split(tuples[3], ':')[1];
+        int position = std::stoi(positionString);
+
+        //cout << "Id: " + to_string(itemId) + " title: " + title + " position: " + to_string(position) + " datetime: " + datetime << endl;
+        realItems.push_back(Item(itemId, title, position, datetime));
+    }
+
+    //UPDATE COLUMN
     result = sqlite3_exec(database, sqlPutColumn.c_str(), NULL, 0, &errorMessage);
     handleSQLError(result, errorMessage);
 
@@ -111,7 +172,11 @@ std::optional<Prog3::Core::Model::Column> BoardRepository::putColumn(int id, std
         return std::nullopt;
     }
     std::cout << "Column with id " + to_string(id) + " sucessfully edited" << endl;
-    return Column(id, name, position);
+    Column column(id, name, position);
+    for (auto item : realItems) {
+        column.addItem(item);
+    }
+    return column;
 }
 
 void BoardRepository::deleteColumn(int id) {
@@ -253,6 +318,15 @@ void BoardRepository::createDummyData() {
   sqlite3_exec takes a "Callback function" as one of its arguments, and since there are many crazy approaches in the wild internet,
   I want to show you how the signature of this "callback function" may look like in order to work with sqlite3_exec()
 */
+
 int BoardRepository::queryCallback(void *data, int numberOfColumns, char **fieldValues, char **columnNames) {
+    string *stringPointer = static_cast<string *>(data);
+    int size = sizeof(columnNames) / sizeof(columnNames[0]);
+    for (int i = 0; i < numberOfColumns; i++) {
+        *stringPointer = *stringPointer + columnNames[i] + ":" + fieldValues[i];
+        if (i < numberOfColumns - 1)
+            *stringPointer = *stringPointer + ",";
+    }
+    *stringPointer = *stringPointer + ";";
     return 0;
 }
