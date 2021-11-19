@@ -80,26 +80,20 @@ std::vector<Column> BoardRepository::getColumns() {
 
 std::optional<Column> BoardRepository::getColumn(int id) {
     string sqlSelect = "SELECT * FROM column WHERE id=" + to_string(id) + ";";
-    string itemSqlSelect = "SELECT * FROM item WHERE column_id=" + to_string(id) + ";";
     char *errorMessage = nullptr;
     //this is done to reserve the needed memory
     Column column(-1, "", 0);
     Column *columnP = &column;
-    vector<Item> tempItems;
-    vector<Item> *items = &tempItems;
+    vector<Item> tempItems = getItems(id);
 
     int result = sqlite3_exec(database, sqlSelect.c_str(), BoardRepository::getColumnCallback, columnP, &errorMessage);
     handleSQLError(result, errorMessage);
-
-    errorMessage = nullptr;
-    int answer = sqlite3_exec(database, itemSqlSelect.c_str(), BoardRepository::getItemCallback, items, &errorMessage);
-    handleSQLError(answer, errorMessage);
 
     for (auto item : tempItems) {
         column.addItem(item);
     }
 
-    if (answer != SQLITE_OK || result != SQLITE_OK || column.getId() == -1)
+    if (result != SQLITE_OK || column.getId() == -1)
         return nullopt;
 
     return column;
