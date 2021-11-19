@@ -83,7 +83,7 @@ std::optional<Column> BoardRepository::getColumn(int id) {
     string itemSqlSelect = "SELECT * FROM item WHERE column_id=" + to_string(id) + ";";
     char *errorMessage = nullptr;
     //this is done to reserve the needed memory
-    Column column(0, "", 0);
+    Column column(-1, "", 0);
     Column *columnP = &column;
     vector<Item> tempItems;
     vector<Item> *items = &tempItems;
@@ -99,7 +99,7 @@ std::optional<Column> BoardRepository::getColumn(int id) {
         column.addItem(item);
     }
 
-    if (answer != SQLITE_OK || result != SQLITE_OK)
+    if (answer != SQLITE_OK || result != SQLITE_OK || column.getId() == -1)
         return nullopt;
 
     return column;
@@ -241,7 +241,7 @@ std::optional<Item> BoardRepository::getItem(int columnId, int itemId) {
     int answer = sqlite3_exec(database, itemSqlSelect.c_str(), BoardRepository::getItemCallback, items, &errorMessage);
     handleSQLError(answer, errorMessage);
 
-    if (answer != SQLITE_OK) {
+    if (answer != SQLITE_OK || tempItems.size() == 0) {
         return nullopt;
     }
     return tempItems[0];
