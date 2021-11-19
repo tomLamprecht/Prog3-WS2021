@@ -20,6 +20,8 @@ class BoardRepository : public RepositoryIf {
         return id != INVALID_ID;
     }
 
+    static int getItemCallback(void *data, int numberOfColumns, char **fieldValues, char **columnNames);
+    static int getColumnCallback(void *data, int numberOfColumns, char **fieldValues, char **columnNames);
     static int queryCallback(void *data, int numberOfColumns, char **fieldValues, char **columnNames);
 
   public:
