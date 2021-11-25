@@ -16,7 +16,7 @@ class JsonParser : public ParserIf {
     rapidjson::Value getJsonValueFromModel(Prog3::Core::Model::Item const &item, rapidjson::Document::AllocatorType &allocator);
     rapidjson::Value getJsonValueFromModel(Prog3::Core::Model::Column const &column, rapidjson::Document::AllocatorType &allocator);
     rapidjson::Value getJsonValueFromModels(std::vector<Prog3::Core::Model::Item> const &items, rapidjson::Document::AllocatorType &allocator);
-
+    rapidjson::Value getJsonValueFromModels(std::vector<Prog3::Core::Model::Column> const &columns, rapidjson::Document::AllocatorType &allocator);
     std::string jsonValueToString(rapidjson::Value const &json);
 
   public:

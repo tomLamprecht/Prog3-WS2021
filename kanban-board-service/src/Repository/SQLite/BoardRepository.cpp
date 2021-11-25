@@ -75,7 +75,26 @@ Board BoardRepository::getBoard() {
 }
 
 std::vector<Column> BoardRepository::getColumns() {
-    throw NotImplementedException();
+    string itemSqlSelect = "SELECT id FROM column;";
+    char *errorMessage = nullptr;
+    vector<int> ids;
+    vector<int> *idsP = &ids;
+    int answer = sqlite3_exec(database, itemSqlSelect.c_str(), BoardRepository::getIdCallback, idsP, &errorMessage);
+    handleSQLError(answer, errorMessage);
+
+    if (answer != SQLITE_OK) {
+        vector<Column> emptyVector;
+        return emptyVector;
+    }
+    vector<Column> columns;
+
+    for (auto id : ids) {
+        optional<Column> temp = getColumn(id);
+        if (temp.has_value()) {
+            columns.push_back(temp.value());
+        }
+    }
+    return columns;
 }
 
 std::optional<Column> BoardRepository::getColumn(int id) {
@@ -232,6 +251,7 @@ std::optional<Item> BoardRepository::getItem(int columnId, int itemId) {
     char *errorMessage = nullptr;
     vector<Item> tempItems;
     vector<Item> *items = &tempItems;
+
     int answer = sqlite3_exec(database, itemSqlSelect.c_str(), BoardRepository::getItemCallback, items, &errorMessage);
     handleSQLError(answer, errorMessage);
 
@@ -401,5 +421,14 @@ int BoardRepository::getItemCallback(void *data, int numberOfColumns, char **fie
     int position = std::stoi(values[3]);
     Item temp(id, title, position, date);
     items->push_back(temp);
+    return 0;
+}
+
+int BoardRepository::getIdCallback(void *data, int numberOfColumns, char **fieldValues, char **columnNames) {
+    if (numberOfColumns == 0) {
+        return 0;
+    }
+    vector<int> *ids = static_cast<vector<int> *>(data);
+    ids->push_back(stoi(fieldValues[0]));
     return 0;
 }
