@@ -71,7 +71,7 @@ void BoardRepository::initialize() {
 }
 
 Board BoardRepository::getBoard() {
-    Board board("Toms Board");
+    Board board("Kanban Board");
     board.setColumns(getColumns());
     return board;
 }
