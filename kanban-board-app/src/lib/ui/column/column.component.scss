@@ -4,6 +4,15 @@
   flex-direction: column;
   justify-content: center;
   margin-top: 16px;
+  text-align: center;
+  border-radius: 20px;
+}
+
+.card-container:hover{
+  background-color: rgba(243, 235, 235, 0.35);
+  transform: translateY(-5px);
+  box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
+
 }
 
 
@@ -31,9 +40,26 @@
 }
 
 .title {
-  color: rgb(50, 50, 50);
+  color: rgb(196, 159, 159);
   // background-color: aqua;
-  padding: 3% 1%;
-  font-weight: 700;
-  font-size: 120%;
+  padding: 3% 5%;
+  font-weight: 800;
+  font-size: 200%;
+  border-top-right-radius: 30px;
+  border-bottom-left-radius: 30px;
+  background-color: #535353;
+  height: 40px;
+  width: 200px;
+  margin: 0 8px 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+  line-height: 24px;
+}
+
+.title:hover{
+background-color: rgba(0, 0, 0, 0.781);
 }

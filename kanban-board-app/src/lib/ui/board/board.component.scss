@@ -3,14 +3,32 @@
   background-color: #24292e;
   border-radius: 10%;
   align-items: flex-start;
+  text-align: center;
 }
 
+
+
 .title {
-  background-color: rgb(240, 187, 121); //background-color: aqua;
+  color: rgba($color: #26d9f8, $alpha: 1.0);
+  border-radius: 100%;
   height: 10%;
   width: 10%;
   padding: 1%;
   margin-left: 10px;
+  margin-top: 15px;
   font-weight: 600;
   font-size: 200%;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+}
+
+.title:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
 }
