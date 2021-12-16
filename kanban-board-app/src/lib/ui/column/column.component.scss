@@ -1,0 +1,39 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+
+.card-container .card:not(:last-child) {
+  margin-right: 0;
+}
+
+.card-container .card:not(.highlight-card) {
+  cursor: pointer;
+}
+.card-container .card:not(.highlight-card):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 17px rgba(0, 0, 0, 0.35);
+}
+
+.card-container .card:not(.highlight-card):hover .material-icons path {
+  fill: rgb(105, 103, 103);
+}
+
+@media screen and (max-width: 767px) {
+  .card-container > *:not(.circle-link),
+  .terminal {
+    width: 100%;
+  }
+}
+
+.title {
+  color: rgb(50, 50, 50);
+  // background-color: aqua;
+  padding: 3% 1%;
+  font-weight: 700;
+  font-size: 120%;
+}

@@ -70,7 +70,6 @@ rapidjson::Value JsonParser::getJsonValueFromModel(Column const &column, rapidjs
 
 rapidjson::Value JsonParser::getJsonValueFromModels(vector<Column> const &columns, rapidjson::Document::AllocatorType &allocator) {
     Value jsonColumns(kArrayType);
-
     for (Column const &column : columns) {
         Value jsonColumn = getJsonValueFromModel(column, allocator);
         jsonColumns.PushBack(jsonColumn, allocator);
@@ -88,7 +87,7 @@ rapidjson::Value JsonParser::getJsonValueFromModels(vector<Item> const &items, r
     return jsonItems;
 }
 
-rapidjson::Value JsonParser::getJsonValueFromModel(Board board, rapidjson::Document::AllocatorType &allocator) {
+rapidjson::Value JsonParser::getJsonValueFromModel(Board &board, rapidjson::Document::AllocatorType &allocator) {
     Value jsonBoard(kObjectType);
     jsonBoard.AddMember("title", Value(board.getTitle().c_str(), allocator), allocator);
     jsonBoard.AddMember("columns", getJsonValueFromModels(board.getColumns(), allocator), allocator);

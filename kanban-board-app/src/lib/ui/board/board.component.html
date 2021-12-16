@@ -1,0 +1,6 @@
+<div class="board">
+  <div class="title">{{title}}</div>
+  <div *ngFor="let column of columns">
+    <column [title]="column.name" [items]="column.items"></column>
+  </div>
+</div>
