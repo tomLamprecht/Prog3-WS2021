@@ -1,6 +1,21 @@
+
 <div class="board">
   <div class="title">{{title}}</div>
+
   <div *ngFor="let column of columns">
-    <column [title]="column.name" [items]="column.items"></column>
+    <column [title]="column.name"
+    [items]="column.items"
+    (deleteColumn)="onDeleteColumn(column)"
+    (changeColumnTitle)="onColumnTitleChange(column, $event)"
+    [columnId]="column.id.toString()"
+    ></column>
   </div>
+
+    <div (click)="addColumn()" class="buttonContainer">
+        <img class="addButton" src="assets\add-button.svg">
+    </div>
+
+
 </div>
+
+

@@ -44,7 +44,7 @@ export class BoardComponent{
       position: 1,
       items: [
         {
-          id: 0,
+          id: 3,
           title: 'my special first task',
           position: 0,
           timestamp: '2021-12-09T10:04:42.058Z',
@@ -58,13 +58,13 @@ export class BoardComponent{
       position: 2,
       items: [
         {
-          id: 0,
+          id: 4,
           title: 'first task',
           position: 0,
           timestamp: '2021-12-09T10:04:42.058Z',
         },
         {
-          id: 1,
+          id: 5,
           title: 'second task',
           position: 1,
           timestamp: '2021-12-09T10:04:42.058Z',
@@ -72,5 +72,30 @@ export class BoardComponent{
       ],
     },
   ];
+
+  generateEmptyColumn(){
+    var column = {
+      id: (Math.random() * 100),
+      name: '',
+      position: 0,
+      items:[],
+    };
+    return column;
+  }
+
+  addColumn(){
+
+    var randomColumn : ColumnModel =this.generateEmptyColumn();
+    this.columns.push(randomColumn);
+  }
+
+  onDeleteColumn(column){
+    var index = this.columns.indexOf(column);
+    this.columns.splice(index,1);
+  }
+
+  onColumnTitleChange(column, event){
+    column.title = event;
+  }
 
 }

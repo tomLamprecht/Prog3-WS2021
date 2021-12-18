@@ -84,7 +84,9 @@ svg.material-icons:not(:last-child) {
   margin-right: 0;
 }
 
-
+.transparent{
+  opacity: 0.8;
+}
 
 .card-container .card:not(.highlight-card) {
   cursor: pointer;

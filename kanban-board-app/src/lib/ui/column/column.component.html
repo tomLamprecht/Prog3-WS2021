@@ -1,4 +1,25 @@
 <div class="card-container">
-  <div class="title">{{title}}</div>
-  <item *ngFor="let item of items" [title]="item.title"></item>
+
+
+
+  <div class="title"
+  (mouseover)="showDeleteButton = true"
+  (mouseleave)="showDeleteButton = false">
+  <input [id]="columnId" type="text" class="inputColumn" [value]="title" (change)="onChange($event)"/>
+    <img class="deleteButton" src="..\..\..\assets\trash-icon.svg" *ngIf="showDeleteButton" (click)="onDelete()">
+  </div>
+  <item *ngFor="let item of items"
+  [title]="item.title"
+  [idItem]="item.id.toString()"
+  (onTitleChange)="changeItemName(item, $event)"
+  (onDeleteItem)="deleteItem(item)"
+  >
+
+</item>
+
+
+  <div  class="buttonContainer">
+    <img (click)="addEmptyItem()" class="addButton" src="..\..\..\assets\add-button.svg">
 </div>
+</div>
+
